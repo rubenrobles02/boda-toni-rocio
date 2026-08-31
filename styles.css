@@ -262,6 +262,7 @@ button{
   border: 2px solid rgba(39, 34, 25, .22);
 }
 .shutter__icon{
+  display: block;
   width: 56px;
   height: 56px;
   color: var(--amber);
