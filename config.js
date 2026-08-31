@@ -24,7 +24,7 @@ window.BODA_CONFIG = {
   /* --- Textos de la boda ---------------------------------------------- */
 
   names: { a: "Toñi", b: "Rocío" },
-  date: "30 de agosto de 2026",      // <-- CAMBIA por la fecha real
+  date: "18 de septiembre de 2026",      // <-- CAMBIA por la fecha real
   welcomeLead: "nos casamos",
 
 
