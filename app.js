@@ -170,28 +170,46 @@
   /* ---------- firma opcional ---------- */
   function setupSign() {
     var card = $("signCard");
+    var toggle = $("signToggle");
     var nameInput = $("nameInput");
     var asked = false;
     try { asked = localStorage.getItem(K_SIGN_ASKED) === "1"; } catch (e) {}
 
-    if (guest.name) nameInput.value = guest.name;
-
-    function maybeShow() {
-      if (!asked && !guest.name) card.hidden = false;
+    function openCard() {
+      nameInput.value = guest.name || "";
+      card.hidden = false;
+      toggle.hidden = true;
+      try { nameInput.focus(); } catch (e) {}
     }
-    maybeShow();
-    window._maybeShowSign = maybeShow;
+
+    function closeCard() {
+      card.hidden = true;
+      toggle.hidden = false;
+      toggle.textContent = guest.name
+        ? "Firmas como " + guest.name + " · cambiar"
+        : "Firmar mis fotos";
+    }
+
+    // estado inicial: pide firmar la primera vez; después, siempre queda el enlace
+    if (!asked && !guest.name) openCard();
+    else closeCard();
+
+    // tras subir fotos, refresca el enlace por si acaso
+    window._maybeShowSign = function () { if (card.hidden) closeCard(); };
+
+    toggle.addEventListener("click", openCard);
 
     $("nameSave").addEventListener("click", function () {
       guest.name = nameInput.value.trim().slice(0, 40);
       save(K_GUEST, guest);
       try { localStorage.setItem(K_SIGN_ASKED, "1"); } catch (e) {}
-      card.hidden = true;
-      if (guest.name) toast("Firmarás como " + guest.name);
+      closeCard();
+      toast(guest.name ? "Firmarás como " + guest.name : "Firma quitada");
     });
+
     $("nameSkip").addEventListener("click", function () {
       try { localStorage.setItem(K_SIGN_ASKED, "1"); } catch (e) {}
-      card.hidden = true;
+      closeCard();
     });
   }
 

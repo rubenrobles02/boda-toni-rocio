@@ -308,6 +308,20 @@ button{
 .capture__alt:hover{ color: var(--cream); }
 .capture__alt:disabled{ opacity: .4; text-decoration: none; }
 
+.sign-toggle{
+  display: block;
+  margin: .7rem auto 0;
+  padding: .3rem .2rem;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sign-toggle:hover{ color: var(--cream); }
+
 /* ---------- Firma ---------- */
 .sign{
   margin: 1.8rem auto 0;
