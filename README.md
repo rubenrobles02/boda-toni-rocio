@@ -101,8 +101,13 @@ Todas las fotos están en Cloudinary, en **Media Library → carpeta
 
 - Puedes descargarlas todas (seleccionar → Download) y montar el álbum, un
   vídeo o un PDF con lo que quieras.
-- Si alguien firmó su nombre, aparece en los metadatos de cada foto
-  (campo *context* → `guest`).
+- Si alguien firmó su nombre:
+  - El **nombre del archivo** empieza por su nombre (`maria-lopez-...`), se ve
+    en la cuadrícula de la Media Library.
+  - Hay una **etiqueta** con su nombre: en la Media Library, filtra por esa
+    etiqueta y tienes todas sus fotos de una.
+  - El nombre completo (con tildes y espacios) está también en el *context*
+    → `guest`.
 - Para limpiar fotos que no quieras: selecciónalas en la Media Library y
   bórralas ahí.
 

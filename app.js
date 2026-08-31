@@ -50,6 +50,17 @@
     return "g-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
   }
 
+  // nombre -> texto seguro para etiqueta / nombre de archivo de Cloudinary
+  function slug(s) {
+    var out = (s || "");
+    try { out = out.normalize("NFD").replace(/\p{Diacritic}/gu, ""); } catch (e) {}
+    return out
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 30);
+  }
+
   var photos = load(K_PHOTOS, []);
 
   /* =======================================================================
@@ -166,7 +177,7 @@
     if (guest.name) nameInput.value = guest.name;
 
     function maybeShow() {
-      if (!asked && !guest.name && photos.length > 0) card.hidden = false;
+      if (!asked && !guest.name) card.hidden = false;
     }
     maybeShow();
     window._maybeShowSign = maybeShow;
@@ -268,8 +279,16 @@
     fd.append("file", file);
     fd.append("upload_preset", CFG.uploadPreset);
     if (CFG.folder) fd.append("folder", CFG.folder);
-    fd.append("tags", "invitado," + guest.id);
+
+    var nameSlug = slug(guest.name);
+    var tags = "invitado," + guest.id;
+    if (nameSlug) tags += "," + nameSlug;
+    fd.append("tags", tags);
+
     if (guest.name) fd.append("context", "guest=" + guest.name.replace(/[|=]/g, " "));
+    if (nameSlug) {
+      fd.append("public_id", nameSlug + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6));
+    }
 
     var url = "https://api.cloudinary.com/v1_1/" + CFG.cloudName + "/auto/upload";
     return fetch(url, { method: "POST", body: fd }).then(function (res) {
