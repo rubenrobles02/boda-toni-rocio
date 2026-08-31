@@ -69,7 +69,17 @@
       return;
     }
 
-    // aparición suave de los nombres
+    // flash de cámara + revelado
+    if (!prefersReduced) {
+      var flash = $("flash");
+      try {
+        flash.animate(
+          [{ opacity: 0 }, { opacity: 0.92, offset: 0.12 }, { opacity: 0 }],
+          { duration: 520, easing: "ease-out" }
+        );
+      } catch (e) {}
+    }
+
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { welcome.classList.add("is-developing"); });
     });
@@ -211,7 +221,7 @@
     chain.then(function () {
       shutter.removeAttribute("aria-busy");
       $("galleryBtn").disabled = false;
-      text.textContent = "Añadir una foto";
+      text.textContent = "Hacer foto";
       renderCount();
       if (window._maybeShowSign) window._maybeShowSign();
       if (ok === total) toast(total === 1 ? "¡Foto subida!" : "¡" + ok + " fotos subidas!");
@@ -289,7 +299,7 @@
   function tx(url, t) {
     return url.indexOf("/upload/") > -1 ? url.replace("/upload/", "/upload/" + t + "/") : url;
   }
-  function thumbOf(url) { return tx(url, "c_limit,w_900,q_auto,f_auto"); }
+  function thumbOf(url) { return tx(url, "c_fill,g_auto,w_600,h_600,q_auto,f_auto"); }
   function bigOf(url) { return tx(url, "c_limit,w_1400,q_auto,f_auto"); }
 
   function renderCount() {

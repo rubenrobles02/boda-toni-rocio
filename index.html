@@ -3,22 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7f3ec">
-<title>El álbum de los invitados · Toñi & Rocío</title>
+<meta name="theme-color" content="#1f2e26">
+<title>La cámara de los invitados · Toñi & Rocío</title>
 <meta name="description" content="Sube tus fotos de la boda de Toñi y Rocío. Se guardan todas para el álbum.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<div class="flash" id="flash" aria-hidden="true"></div>
 
 <!-- ---------- Bienvenida (una vez por visita) ---------- -->
 <section class="welcome" id="welcome" role="dialog" aria-label="Bienvenida a la boda de Toñi y Rocío">
   <div class="welcome__inner">
     <p class="welcome__lead" id="welcomeLead">nos casamos</p>
     <h1 class="welcome__names">Toñi<span class="amp">&amp;</span>Rocío</h1>
-    <span class="welcome__rule" aria-hidden="true"></span>
     <p class="welcome__date" id="welcomeDate">&nbsp;</p>
     <p class="welcome__hint" id="welcomeHint">toca para entrar</p>
   </div>
@@ -28,10 +29,9 @@
 <main class="app" id="app" hidden>
 
   <header class="app__head">
-    <p class="eyebrow">El álbum de los invitados</p>
+    <p class="eyebrow">La cámara de los invitados</p>
     <h1 class="app__title">Toñi<span class="amp">&amp;</span>Rocío</h1>
     <p class="app__sub">Haz fotos de la boda y súbelas aquí. Se guardan todas para el álbum que Toñi y Rocío montarán después.</p>
-    <span class="divider" aria-hidden="true"><i></i></span>
   </header>
 
   <div class="notice" id="configWarn" hidden>
@@ -39,17 +39,14 @@
   </div>
 
   <section class="capture">
-    <button class="cta" id="shutter" type="button">
-      <svg class="cta__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.1a1 1 0 0 0 .8-.4l1-1.35A1.6 1.6 0 0 1 11.7 3.6h.6a1.6 1.6 0 0 1 1.3.65L15.6 5.6a1 1 0 0 0 .8.4h1.1A2.5 2.5 0 0 1 20 8.5v7A2.5 2.5 0 0 1 17.5 18h-11A2.5 2.5 0 0 1 4 15.5z"/>
-        <circle cx="12" cy="11.5" r="3.4"/>
-      </svg>
-      <span class="cta__label" id="captureText">Añadir una foto</span>
+    <button class="shutter" id="shutter" type="button" aria-label="Hacer foto">
+      <span class="shutter__ring"></span>
     </button>
     <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
     <input type="file" id="galleryInput" accept="image/*" multiple hidden>
+    <p class="capture__text" id="captureText">Hacer foto</p>
     <p class="capture__count" id="count">Aún no has subido fotos</p>
-    <button type="button" class="capture__alt" id="galleryBtn">Subir desde la galería</button>
+    <button type="button" class="capture__alt" id="galleryBtn">o subir desde la galería</button>
 
     <div class="sign" id="signCard" hidden>
       <label for="nameInput" class="sign__label">Firma tus fotos para el álbum <span>(opcional)</span></label>
