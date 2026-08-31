@@ -39,12 +39,14 @@
   </div>
 
   <section class="capture">
-    <button class="shutter" id="shutter" type="button" aria-label="Añadir fotos">
+    <button class="shutter" id="shutter" type="button" aria-label="Hacer foto">
       <span class="shutter__ring"></span>
     </button>
-    <input type="file" id="fileInput" accept="image/*" multiple hidden>
-    <p class="capture__text" id="captureText">Añadir fotos</p>
+    <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+    <input type="file" id="galleryInput" accept="image/*" multiple hidden>
+    <p class="capture__text" id="captureText">Hacer foto</p>
     <p class="capture__count" id="count">Aún no has subido fotos</p>
+    <button type="button" class="capture__alt" id="galleryBtn">o subir desde la galería</button>
 
     <div class="sign" id="signCard" hidden>
       <label for="nameInput" class="sign__label">Firma tus fotos para el álbum <span>(opcional)</span></label>

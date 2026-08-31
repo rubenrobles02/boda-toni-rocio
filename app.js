@@ -114,16 +114,28 @@
 
     if (!CONFIGURED) $("configWarn").hidden = false;
 
-    var input = $("fileInput");
-    $("shutter").addEventListener("click", function () {
-      if ($("shutter").getAttribute("aria-busy") === "true") return;
-      input.click();
+    var camInput = $("fileInput");
+    var galInput = $("galleryInput");
+    var shutter = $("shutter");
+
+    function busy() { return shutter.getAttribute("aria-busy") === "true"; }
+
+    shutter.addEventListener("click", function () {
+      if (!busy()) camInput.click();
     });
-    input.addEventListener("change", function () {
-      var files = Array.prototype.slice.call(input.files || []);
-      input.value = "";
-      if (files.length) handleFiles(files);
+    $("galleryBtn").addEventListener("click", function () {
+      if (!busy()) galInput.click();
     });
+
+    function onPick(inp) {
+      return function () {
+        var files = Array.prototype.slice.call(inp.files || []);
+        inp.value = "";
+        if (files.length) handleFiles(files);
+      };
+    }
+    camInput.addEventListener("change", onPick(camInput));
+    galInput.addEventListener("change", onPick(galInput));
 
     $("albumBtn").addEventListener("click", function () { $("albumScreen").hidden = false; });
     $("albumClose").addEventListener("click", function () { $("albumScreen").hidden = true; });
@@ -188,6 +200,7 @@
 
     var shutter = $("shutter");
     shutter.setAttribute("aria-busy", "true");
+    $("galleryBtn").disabled = true;
     var text = $("captureText");
     var total = images.length;
     var ok = 0;
@@ -207,7 +220,8 @@
 
     chain.then(function () {
       shutter.removeAttribute("aria-busy");
-      text.textContent = "Añadir fotos";
+      $("galleryBtn").disabled = false;
+      text.textContent = "Hacer foto";
       renderCount();
       if (window._maybeShowSign) window._maybeShowSign();
       if (ok === total) toast(total === 1 ? "¡Foto subida!" : "¡" + ok + " fotos subidas!");

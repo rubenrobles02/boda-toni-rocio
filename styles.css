@@ -293,6 +293,21 @@ button{
   color: var(--muted);
 }
 
+.capture__alt{
+  display: inline-block;
+  margin: 1rem 0 0;
+  padding: .35rem .2rem;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.capture__alt:hover{ color: var(--cream); }
+.capture__alt:disabled{ opacity: .4; text-decoration: none; }
+
 /* ---------- Firma ---------- */
 .sign{
   margin: 1.8rem auto 0;
