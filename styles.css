@@ -261,21 +261,19 @@ button{
   border-radius: 50%;
   border: 2px solid rgba(39, 34, 25, .22);
 }
-.shutter__ring{
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
-  background: var(--amber);
-  box-shadow: inset 0 3px 8px rgba(0, 0, 0, .18);
-  transition: transform .12s ease, background .2s ease;
+.shutter__icon{
+  width: 56px;
+  height: 56px;
+  color: var(--amber);
+  transition: transform .12s ease, color .2s ease;
 }
 .shutter:active{ transform: scale(.98); }
-.shutter:active .shutter__ring{ transform: scale(.8); background: var(--amber-d); }
+.shutter:active .shutter__icon{ transform: scale(.88); color: var(--amber-d); }
 .shutter[aria-busy="true"]{ cursor: progress; }
-.shutter[aria-busy="true"] .shutter__ring{
-  animation: iris 1s ease-in-out infinite;
+.shutter[aria-busy="true"] .shutter__icon{
+  animation: iris 1.1s ease-in-out infinite;
 }
-@keyframes iris{ 50%{ transform: scale(.66); } }
+@keyframes iris{ 50%{ transform: scale(.82); opacity: .55; } }
 
 .capture__text{
   margin: 1rem 0 0;
