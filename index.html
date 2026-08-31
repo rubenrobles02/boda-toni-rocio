@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2e26">
+<title>La cámara de los invitados · Toñi & Rocío</title>
+<meta name="description" content="Sube tus fotos de la boda de Toñi y Rocío. Se guardan todas para el álbum.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<!-- ---------- Bienvenida (una vez por visita) ---------- -->
+<section class="welcome" id="welcome" role="dialog" aria-label="Bienvenida a la boda de Toñi y Rocío">
+  <div class="welcome__inner">
+    <p class="welcome__lead" id="welcomeLead">nos casamos</p>
+    <h1 class="welcome__names">Toñi<span class="amp">&amp;</span>Rocío</h1>
+    <p class="welcome__date" id="welcomeDate">&nbsp;</p>
+    <p class="welcome__hint" id="welcomeHint">toca para entrar</p>
+  </div>
+</section>
+
+<!-- ---------- App ---------- -->
+<main class="app" id="app" hidden>
+
+  <header class="app__head">
+    <p class="eyebrow">La cámara de los invitados</p>
+    <h1 class="app__title">Toñi<span class="amp">&amp;</span>Rocío</h1>
+    <p class="app__sub">Haz fotos de la boda y súbelas aquí. Se guardan todas para el álbum que Toñi y Rocío montarán después.</p>
+  </header>
+
+  <div class="notice" id="configWarn" hidden>
+    Falta conectar Cloudinary. Edita <code>config.js</code> siguiendo el <code>README</code>.
+  </div>
+
+  <section class="capture">
+    <button class="shutter" id="shutter" type="button" aria-label="Añadir fotos">
+      <span class="shutter__ring"></span>
+    </button>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+    <p class="capture__text" id="captureText">Añadir fotos</p>
+    <p class="capture__count" id="count">Aún no has subido fotos</p>
+
+    <div class="sign" id="signCard" hidden>
+      <label for="nameInput" class="sign__label">Firma tus fotos para el álbum <span>(opcional)</span></label>
+      <div class="sign__row">
+        <input type="text" id="nameInput" placeholder="Tu nombre" autocomplete="name" maxlength="40">
+        <button type="button" id="nameSave">Guardar</button>
+      </div>
+      <button type="button" class="sign__skip" id="nameSkip">Ahora no</button>
+    </div>
+  </section>
+
+  <section class="strip" id="strip" aria-live="polite" aria-label="Tus fotos"></section>
+
+  <section class="album">
+    <button class="album__btn" id="albumBtn" type="button">Ver el álbum</button>
+  </section>
+
+  <footer class="app__foot">
+    <p>Tus fotos se guardan en la colección de la boda. Puedes quitarlas de tu galería cuando quieras; durante los primeros <span id="footMin">10</span>&nbsp;minutos se borran del todo.</p>
+    <p class="app__foot-mark">Hecho con cariño para Toñi y Rocío</p>
+  </footer>
+
+</main>
+
+<!-- ---------- Visor de foto ---------- -->
+<div class="viewer" id="viewer" hidden>
+  <button class="viewer__close" id="viewerClose" type="button" aria-label="Cerrar">✕</button>
+  <img id="viewerImg" alt="Foto ampliada">
+</div>
+
+<!-- ---------- Pantalla del álbum ---------- -->
+<div class="album-screen" id="albumScreen" hidden>
+  <button class="album-screen__close" id="albumClose" type="button" aria-label="Cerrar">✕</button>
+  <div class="album-screen__inner">
+    <p class="eyebrow">El álbum</p>
+    <h2 class="album-screen__title">En el cuarto oscuro</h2>
+    <p class="album-screen__body">Todavía se está revelando. Cuando pase la boda, Toñi y Rocío reunirán todas las fotos de todo el mundo y os enviarán el álbum completo.</p>
+    <p class="album-screen__soon">Próximamente ✨</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="config.js"></script>
+<script src="app.js" defer></script>
+</body>
+</html>
