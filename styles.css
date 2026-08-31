@@ -246,6 +246,7 @@ button{
 .shutter{
   width: 132px;
   height: 132px;
+  margin: 0 auto;
   border-radius: 50%;
   background: var(--paper);
   position: relative;
