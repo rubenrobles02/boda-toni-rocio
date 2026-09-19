@@ -1,0 +1,266 @@
+/* =========================================================================
+   Álbum en construcción · galería 3D ("el silo de recuerdos")
+   Anillos de fotos girando en el espacio, arrastrables, con visor a
+   pantalla completa. Pensada para que quepa en el mismo universo visual
+   (verde noche, papel revelado, ámbar) que el resto de la web.
+   ========================================================================= */
+
+/* el álbum-screen base es un grid centrado (pantalla "próximamente" antigua);
+   para la galería 3D necesita ocupar toda la pantalla sin recorte */
+#albumScreen{
+  display: block;
+  padding: 0;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path 1s cubic-bezier(.16, .84, .2, 1);
+}
+#albumScreen.is-open{ clip-path: circle(150% at 50% 50%); }
+
+@media (prefers-reduced-motion: reduce){
+  #albumScreen{ transition: none; clip-path: none; }
+}
+
+.g3d{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.g3d__head{
+  flex: none;
+  padding: calc(3.3rem + env(safe-area-inset-top)) 3.6rem 0;
+  text-align: center;
+}
+.g3d__title{
+  margin: .5rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  color: var(--paper);
+}
+.g3d__hint{
+  margin: .5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: .85;
+}
+.g3d__count{ color: var(--amber); }
+
+.g3d__toggle{
+  position: absolute;
+  top: calc(.8rem + env(safe-area-inset-top));
+  left: 1rem;
+  padding: .4rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: .64rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cream);
+  z-index: 3;
+  background: rgba(38, 56, 46, .55);
+  backdrop-filter: blur(4px);
+}
+.g3d__toggle:hover{ border-color: var(--amber); color: var(--amber); }
+
+/* ---------- escenario 3D ---------- */
+.g3d__stage{
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  perspective: 1300px;
+  perspective-origin: 50% 46%;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.g3d__stage.is-dragging{ cursor: grabbing; }
+
+.g3d__sparkles{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.g3d__spark{
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--amber);
+  opacity: 0;
+  animation: g3d-spark linear infinite;
+}
+@keyframes g3d-spark{
+  0%{ opacity: 0; transform: translateY(0) scale(.6); }
+  12%{ opacity: .7; }
+  88%{ opacity: .5; }
+  100%{ opacity: 0; transform: translateY(-140px) scale(1.1); }
+}
+
+.g3d__scene{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.g3d__ring{
+  position: absolute;
+  top: 0; left: 0;
+  transform-style: preserve-3d;
+  animation: g3d-spin linear infinite;
+}
+.g3d__ring[data-dir="rev"]{ animation-direction: reverse; }
+@keyframes g3d-spin{
+  from{ transform: translate(-50%,-50%) rotateY(0deg); }
+  to{ transform: translate(-50%,-50%) rotateY(360deg); }
+}
+
+.g3d__card{
+  position: absolute;
+  top: 0; left: 0;
+  width: var(--cw);
+  height: var(--ch);
+  margin: calc(var(--ch) / -2) 0 0 calc(var(--cw) / -2);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .45), 0 0 0 1px rgba(244, 235, 218, .06);
+  transform: rotateY(var(--ang)) translateZ(var(--rad));
+  backface-visibility: hidden;
+}
+.g3d__card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.g3d__card::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 18px rgba(0,0,0,.28);
+  pointer-events: none;
+}
+
+.g3d__fade{
+  position: absolute;
+  left: 0; right: 0;
+  height: 20%;
+  pointer-events: none;
+  z-index: 2;
+}
+.g3d__fade--top{ top: 0; background: linear-gradient(var(--ground), transparent); }
+.g3d__fade--bottom{ bottom: 0; background: linear-gradient(transparent, var(--ground)); }
+
+.g3d__updown{
+  position: absolute;
+  right: .9rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  z-index: 3;
+}
+.g3d__updown button{
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(38, 56, 46, .6);
+  border: 1px solid var(--line);
+  color: var(--cream);
+  font-size: 1.1rem;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(4px);
+}
+.g3d__updown button:active{ transform: scale(.94); }
+
+/* ---------- cuadrícula alternativa ---------- */
+.g3d__grid{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: .5rem 1rem calc(2rem + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.g3d__grid[hidden]{ display: none; }
+.g3d__gitem{
+  aspect-ratio: 3 / 4;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+.g3d__gitem img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- visor con navegación ---------- */
+.g3d__lb{
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: #0a0f0c;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+}
+.g3d__lb[hidden]{ display: none; }
+.g3d__lb img{
+  max-width: 100%;
+  max-height: 82vh;
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .55);
+  opacity: 0;
+  transform: scale(.98);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.g3d__lb img.is-in{ opacity: 1; transform: scale(1); }
+.g3d__lbClose,
+.g3d__lbPrev,
+.g3d__lbNext{
+  position: absolute;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: rgba(244, 235, 218, .12);
+  color: var(--cream);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  z-index: 2;
+}
+.g3d__lbClose{ top: calc(.8rem + env(safe-area-inset-top)); right: 1rem; }
+.g3d__lbPrev{ left: .6rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; }
+.g3d__lbNext{ right: .6rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; }
+.g3d__lbCount{
+  position: absolute;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .12em;
+  color: var(--muted);
+}
+
+@media (min-width: 640px){
+  .g3d__grid{ grid-template-columns: repeat(5, 1fr); gap: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .g3d__ring{ animation: none; }
+  .g3d__spark{ animation: none; opacity: .4; }
+  .g3d__lb img{ transition: none; }
+}

@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="gallery.css">
 </head>
 <body>
 
@@ -84,17 +85,43 @@
 <!-- ---------- Pantalla del álbum ---------- -->
 <div class="album-screen" id="albumScreen" hidden>
   <button class="album-screen__close" id="albumClose" type="button" aria-label="Cerrar">✕</button>
-  <div class="album-screen__inner">
-    <p class="eyebrow">El álbum</p>
-    <h2 class="album-screen__title">En el cuarto oscuro</h2>
-    <p class="album-screen__body">Todavía se está revelando. Cuando pase la boda, Toñi y Rocío reunirán todas las fotos de todo el mundo y os enviarán el álbum completo.</p>
-    <p class="album-screen__soon">Próximamente ✨</p>
+
+  <div class="g3d" id="g3d">
+    <button class="g3d__toggle" id="g3dToggle" type="button">▦ Cuadrícula</button>
+    <div class="g3d__head">
+      <p class="eyebrow">Álbum en construcción</p>
+      <h2 class="g3d__title">Lo que ya habéis capturado</h2>
+      <p class="g3d__hint"><span class="g3d__count" id="g3dCount">…</span> fotos · arrastra para mirar alrededor</p>
+    </div>
+
+    <div class="g3d__stage" id="g3dStage">
+      <div class="g3d__sparkles" id="g3dSparkles"></div>
+      <div class="g3d__scene" id="g3dScene"></div>
+      <div class="g3d__fade g3d__fade--top"></div>
+      <div class="g3d__fade g3d__fade--bottom"></div>
+      <div class="g3d__updown">
+        <button type="button" id="g3dUp" aria-label="Subir">▲</button>
+        <button type="button" id="g3dDown" aria-label="Bajar">▼</button>
+      </div>
+    </div>
+
+    <div class="g3d__grid" id="g3dGrid" hidden></div>
+  </div>
+
+  <div class="g3d__lb" id="g3dLb" hidden>
+    <button class="g3d__lbClose" id="g3dLbClose" type="button" aria-label="Cerrar foto">✕</button>
+    <button class="g3d__lbPrev" id="g3dLbPrev" type="button" aria-label="Anterior">‹</button>
+    <button class="g3d__lbNext" id="g3dLbNext" type="button" aria-label="Siguiente">›</button>
+    <img id="g3dLbImg" alt="Foto del álbum">
+    <p class="g3d__lbCount" id="g3dLbCount"></p>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script src="config.js"></script>
+<script src="album/manifest.js"></script>
 <script src="app.js" defer></script>
+<script src="gallery.js" defer></script>
 </body>
 </html>
