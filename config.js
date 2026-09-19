@@ -20,6 +20,11 @@ window.BODA_CONFIG = {
   // Carpeta dentro de Cloudinary donde se guardan todas las fotos.
   folder: "boda-toni-rocio",
 
+  // El álbum en vivo pide a Cloudinary todas las fotos con esta etiqueta
+  // (cada foto que sube un invitado ya la lleva). Para que funcione, en
+  // Cloudinary: Settings → Security → activa "Resource list".
+  albumTag: "invitado",
+
 
   /* --- Textos de la boda ---------------------------------------------- */
 

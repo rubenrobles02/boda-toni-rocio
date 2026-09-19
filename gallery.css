@@ -83,6 +83,22 @@
 }
 .g3d__stage.is-dragging{ cursor: grabbing; }
 
+.g3d__loading{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.g3d__loading[hidden]{ display: none; }
+
 .g3d__sparkles{
   position: absolute;
   inset: 0;

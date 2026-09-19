@@ -5,16 +5,20 @@
    - Visor a pantalla completa con anterior/siguiente sobre TODAS las fotos.
    - Alternativa en cuadrícula para quien prefiera algo más sencillo, y
      respeto de "reduce motion".
+   - Las fotos se piden EN VIVO a Cloudinary (todas las que lleven la
+     etiqueta "invitado", es decir, todo lo que suben los invitados) usando
+     el listado público sin firmar. Si esa opción no está activada en la
+     cuenta de Cloudinary, o falla la red, se usa como respaldo el lote de
+     fotos que ya viene empaquetado en album/manifest.js.
    ========================================================================= */
 
 (function () {
   "use strict";
 
-  var PHOTOS = window.ALBUM_PHOTOS || [];
-  if (!PHOTOS.length) return;
-
+  var CFG = window.BODA_CONFIG || {};
   var THUMB_DIR = "album/thumbs/";
   var FULL_DIR = "album/full/";
+  var ALBUM_TAG = CFG.albumTag || "invitado";
 
   var $ = function (id) { return document.getElementById(id); };
   var prefersReduced = window.matchMedia &&
@@ -26,6 +30,8 @@
   var grid = $("g3dGrid");
   var toggleBtn = $("g3dToggle");
   var countEl = $("g3dCount");
+  var hintEl = $("g3dHint");
+  var loadingEl = $("g3dLoading");
   var upBtn = $("g3dUp");
   var downBtn = $("g3dDown");
 
@@ -33,14 +39,76 @@
   var lbImg = $("g3dLbImg");
   var lbCount = $("g3dLbCount");
 
-  var built = false;
+  if (!stage || !scene) return;
+
+  var PHOTOS = [];
+  var handlersAttached = false;
+  var loading = false;
   var showingGrid = false;
+
+  /* =======================================================================
+     FUENTE DE FOTOS: Cloudinary en vivo, con el lote local como respaldo
+     ===================================================================== */
+  function cloudThumb(publicId, version, format) {
+    return "https://res.cloudinary.com/" + CFG.cloudName +
+      "/image/upload/c_fill,g_auto,w_640,h_640,q_auto,f_auto/v" +
+      version + "/" + publicId + "." + format;
+  }
+  function cloudFull(publicId, version, format) {
+    return "https://res.cloudinary.com/" + CFG.cloudName +
+      "/image/upload/c_limit,w_1600,q_auto,f_auto/v" +
+      version + "/" + publicId + "." + format;
+  }
+
+  function fetchLivePhotos() {
+    if (!CFG.cloudName) return Promise.reject(new Error("sin cloudName"));
+    var url = "https://res.cloudinary.com/" + CFG.cloudName +
+      "/image/list/" + encodeURIComponent(ALBUM_TAG) + ".json";
+    return fetch(url).then(function (res) {
+      if (!res.ok) throw new Error("listado no disponible (" + res.status + ")");
+      return res.json();
+    }).then(function (data) {
+      var resources = data.resources || [];
+      if (!resources.length) throw new Error("listado vacío");
+      return resources.map(function (r) {
+        var format = r.format || "jpg";
+        return {
+          thumb: cloudThumb(r.public_id, r.version, format),
+          full: cloudFull(r.public_id, r.version, format),
+          w: r.width || 1200,
+          h: r.height || 1600
+        };
+      });
+    });
+  }
+
+  function fallbackPhotos() {
+    var list = window.ALBUM_PHOTOS || [];
+    return list.map(function (p) {
+      return { thumb: THUMB_DIR + p.f, full: FULL_DIR + p.f, w: p.w, h: p.h };
+    });
+  }
+
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function resolvePhotos() {
+    return fetchLivePhotos().then(shuffle).catch(function (err) {
+      console.warn("[álbum] usando lote local (fotos en vivo no disponibles):", err.message);
+      return fallbackPhotos();
+    });
+  }
 
   /* =======================================================================
      DISPOSICIÓN DE LOS ANILLOS
      ===================================================================== */
-  var PER_RING = 17; // 170 fotos = 10 anillos exactos de 17
-  var ringsCount = Math.max(1, Math.ceil(PHOTOS.length / PER_RING));
+  var ringsCount = 1;
+  var PER_RING = 17;
 
   function sizes() {
     var w = window.innerWidth;
@@ -55,6 +123,8 @@
     scene.innerHTML = "";
     geo = sizes();
 
+    PER_RING = Math.max(8, Math.min(20, Math.round(Math.sqrt(PHOTOS.length * 1.7)) || 8));
+    ringsCount = Math.max(1, Math.ceil(PHOTOS.length / PER_RING));
     var perLastRing = PHOTOS.length - PER_RING * (ringsCount - 1);
     var idx = 0;
 
@@ -85,7 +155,7 @@
         card.dataset.index = String((idx - 1) % PHOTOS.length);
 
         var img = document.createElement("img");
-        img.src = THUMB_DIR + p.f;
+        img.src = p.thumb;
         img.alt = "Foto del álbum de boda";
         img.decoding = "async";
         card.appendChild(img);
@@ -146,7 +216,7 @@
       "translateZ(" + extraZ + "px) scale(" + extraScale.toFixed(3) + ") " +
       "rotateX(" + tiltX + "deg) rotateY(" + rotY + "deg)";
     // solo transform + opacity (baratos, van por GPU): nada de "filter" animado
-    // por frame, que en 170 fotos provoca tirones reales en el móvil
+    // por frame, que en muchas fotos provoca tirones reales en el móvil
     scene.style.opacity = warp > 0 ? String(0.25 + 0.75 * entrance) : "";
   }
 
@@ -267,13 +337,13 @@
      CUADRÍCULA ALTERNATIVA
      ===================================================================== */
   function buildGrid() {
-    if (grid.childElementCount) return;
+    grid.innerHTML = "";
     PHOTOS.forEach(function (p, i) {
       var fig = document.createElement("button");
       fig.type = "button";
       fig.className = "g3d__gitem";
       var img = document.createElement("img");
-      img.src = THUMB_DIR + p.f;
+      img.src = p.thumb;
       img.alt = "Foto del álbum de boda";
       img.loading = "lazy";
       img.decoding = "async";
@@ -286,7 +356,6 @@
   function toggleView() {
     showingGrid = !showingGrid;
     if (showingGrid) {
-      buildGrid();
       grid.hidden = false;
       stage.hidden = true;
       toggleBtn.textContent = "◎ Galaxia";
@@ -318,7 +387,7 @@
       lbImg.src = next.src;
       requestAnimationFrame(function () { lbImg.classList.add("is-in"); });
     };
-    next.src = FULL_DIR + p.f;
+    next.src = p.full;
     lbCount.textContent = (lbIndex + 1) + " / " + PHOTOS.length;
   }
   function lbStep(dir) { openLightbox(lbIndex + dir); }
@@ -335,15 +404,11 @@
   }, { passive: true });
 
   /* =======================================================================
-     ARRANQUE (bajo demanda, al abrir el álbum por primera vez)
+     ARRANQUE: escuchadores una sola vez, contenido recargado cada apertura
      ===================================================================== */
-  function ensureBuilt() {
-    if (built) return;
-    built = true;
-    countEl.textContent = String(PHOTOS.length);
-    buildScene();
-    buildSparkles();
-    startLoop();
+  function attachHandlersOnce() {
+    if (handlersAttached) return;
+    handlersAttached = true;
 
     stage.addEventListener("pointerdown", onDown);
     stage.addEventListener("pointermove", onMove);
@@ -368,8 +433,29 @@
     });
 
     window.addEventListener("resize", function () {
-      if (!built) return;
+      if (!PHOTOS.length || stage.hidden) return;
       buildScene();
+    });
+  }
+
+  function openAlbum() {
+    attachHandlersOnce();
+    if (loading) return;
+    loading = true;
+    if (loadingEl) loadingEl.hidden = false;
+    if (hintEl) hintEl.textContent = "cargando fotos…";
+
+    resolvePhotos().then(function (list) {
+      PHOTOS = list;
+      loading = false;
+      if (loadingEl) loadingEl.hidden = true;
+      countEl.textContent = String(PHOTOS.length);
+      if (hintEl) hintEl.innerHTML = '<span class="g3d__count">' + PHOTOS.length + '</span> fotos · arrastra para mirar alrededor';
+      buildScene();
+      buildSparkles();
+      buildGrid();
+      startLoop();
+      playEntrance();
     });
   }
 
@@ -378,11 +464,7 @@
   var albumClose = $("albumClose");
 
   if (albumBtn) {
-    albumBtn.addEventListener("click", function () {
-      ensureBuilt();
-      startLoop();
-      playEntrance();
-    });
+    albumBtn.addEventListener("click", openAlbum);
   }
   if (albumClose) {
     albumClose.addEventListener("click", function () {
