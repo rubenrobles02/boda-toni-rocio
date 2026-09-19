@@ -33,7 +33,13 @@
     <p class="eyebrow">La cámara de los invitados</p>
     <h1 class="app__title">Toñi<span class="amp">&amp;</span>Rocío</h1>
     <p class="app__sub">Haz fotos de la boda y súbelas aquí. Se guardan todas para el álbum que Toñi y Rocío montarán después.</p>
+    <p class="app__note">Evitad subir muchas fotos iguales o muy seguidas (ráfagas) 🙏 así el álbum queda más bonito para todos</p>
   </header>
+
+  <section class="album album--top">
+    <button class="album__btn" id="albumBtn" type="button">Ver el álbum</button>
+    <p class="album__hint">Cada foto que subís se añade sola al álbum, al momento</p>
+  </section>
 
   <div class="notice" id="configWarn" hidden>
     Falta conectar Cloudinary. Edita <code>config.js</code> siguiendo el <code>README</code>.
@@ -64,10 +70,6 @@
   </section>
 
   <section class="strip" id="strip" aria-live="polite" aria-label="Tus fotos"></section>
-
-  <section class="album">
-    <button class="album__btn" id="albumBtn" type="button">Ver el álbum</button>
-  </section>
 
   <footer class="app__foot">
     <p>Tus fotos se guardan en la colección de la boda. Puedes quitarlas de tu galería cuando quieras; durante los primeros <span id="footMin">10</span>&nbsp;minutos se borran del todo.</p>
@@ -115,13 +117,13 @@
     <button class="g3d__lbNext" id="g3dLbNext" type="button" aria-label="Siguiente">›</button>
     <img id="g3dLbImg" alt="Foto del álbum">
     <p class="g3d__lbCount" id="g3dLbCount"></p>
+    <a class="g3d__lbDownload" id="g3dLbDownload" aria-label="Descargar esta foto" title="Descargar">⬇</a>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script src="config.js"></script>
-<script src="album/manifest.js"></script>
 <script src="app.js" defer></script>
 <script src="gallery.js" defer></script>
 </body>

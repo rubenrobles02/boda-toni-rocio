@@ -271,6 +271,30 @@
   color: var(--muted);
 }
 
+/* discreto pero legible: un icono con fondo tenue, no un botón que grite */
+.g3d__lbDownload{
+  position: absolute;
+  right: calc(.8rem + env(safe-area-inset-right));
+  bottom: calc(.9rem + env(safe-area-inset-bottom));
+  width: 2.7rem;
+  height: 2.7rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(244, 235, 218, .1);
+  color: var(--cream);
+  font-size: 1.15rem;
+  opacity: .75;
+  z-index: 2;
+  transition: opacity .2s ease, color .2s ease, background .2s ease;
+}
+.g3d__lbDownload:hover,
+.g3d__lbDownload:focus-visible{
+  opacity: 1;
+  color: var(--amber);
+  background: rgba(244, 235, 218, .18);
+}
+
 @media (min-width: 640px){
   .g3d__grid{ grid-template-columns: repeat(5, 1fr); gap: 8px; }
 }

@@ -38,6 +38,7 @@
   var lb = $("g3dLb");
   var lbImg = $("g3dLbImg");
   var lbCount = $("g3dLbCount");
+  var lbDownload = $("g3dLbDownload");
 
   if (!stage || !scene) return;
 
@@ -58,6 +59,16 @@
     return "https://res.cloudinary.com/" + CFG.cloudName +
       "/image/upload/c_limit,w_1600,q_auto,f_auto/v" +
       version + "/" + publicId + "." + format;
+  }
+
+  // en Cloudinary, "fl_attachment" fuerza la descarga real aunque la imagen
+  // sea de otro origen (el atributo download del <a> no sirve ahí); en el
+  // lote local de respaldo, mismo origen, así que la URL vale tal cual
+  function downloadHref(url) {
+    if (url.indexOf("res.cloudinary.com") > -1 && url.indexOf("/upload/") > -1) {
+      return url.replace("/upload/", "/upload/fl_attachment/");
+    }
+    return url;
   }
 
   function fetchLivePhotos() {
@@ -389,6 +400,10 @@
     };
     next.src = p.full;
     lbCount.textContent = (lbIndex + 1) + " / " + PHOTOS.length;
+    if (lbDownload) {
+      lbDownload.href = downloadHref(p.full);
+      lbDownload.download = "boda-toni-rocio-" + (lbIndex + 1) + ".jpg";
+    }
   }
   function lbStep(dir) { openLightbox(lbIndex + dir); }
 

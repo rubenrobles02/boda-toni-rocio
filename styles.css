@@ -505,9 +505,33 @@ button{
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--cream);
-  transition: border-color .2s ease, color .2s ease;
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
 }
 .album__btn:hover{ border-color: var(--amber); color: var(--amber); }
+
+/* botón de arriba: mismo espíritu, algo más presente al ser lo primero que se ve */
+.album--top{
+  margin-top: 1.7rem;
+}
+.album--top .album__btn{
+  padding: .95rem 2rem;
+  border-color: rgba(231, 163, 61, .45);
+  background: rgba(231, 163, 61, .08);
+}
+.album--top .album__btn:hover{ background: rgba(231, 163, 61, .16); }
+.album__hint{
+  margin: .7rem 0 0;
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.app__note{
+  margin: .9rem auto 0;
+  max-width: 20rem;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
 
 .app__foot{
   margin-top: 3rem;
